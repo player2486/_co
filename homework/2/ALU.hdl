@@ -26,27 +26,45 @@
 // if (f == 0)  sets out = x & y  // bitwise and
 // if (no == 1) sets out = !out   // bitwise not
 
-Chip name: ALU
-Inputs: x[16], y[16], // Two 16-bit data inputs
-        zx, // Zero the x input
-        nx, // Negate the x input
-        zy, // Zero the y input
-        ny, // Negate the y input
-        f, // Function code: 1 for Add, 0 for And
-        no // Negate the out output
+CHIP ALU {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute out = x + y (if 1) or x & y (if 0)
+        no; // negate the out output?
 
-Outputs: out[16], // 16-bit output
-                zr, // True iff out=0
-                ng // True iff out<0
+    OUT 
+        out[16], // 16-bit output
+        zr, // 1 if (out == 0), 0 otherwise
+        ng; // 1 if (out < 0),  0 otherwise
 
-Function: if zx then x = 0 // 16-bit zero constant
-                if nx then x = !x // Bit-wise negation
-                if zy then y = 0 // 16-bit zero constant
-                if ny then y = !y // Bit-wise negation
-                if f then out = x + y // Integer 2's complement addition
-                                else out = x & y // Bit-wise And
-                if no then out = !out // Bit-wise negation
-                if out=0 then zr = 1 else zr = 0 // 16-bit eq. comparison
-                if out<0 then ng = 1 else ng = 0 // 16-bit neg. comparison
+    PARTS:
 
-Comment: Overflow is neither detected nor handled.
+   // zx, nx
+   Mux16(a=x, b=false, sel=zx, out=zerox);
+   Not16(in=zerox, out=notx);
+   Mux16(a=zerox, b=notx, sel=nx, out=inpx);
+
+   // zy, ny
+   Mux16(a=y, b=false, sel=zy, out=zeroy);
+   Not16(in=zeroy, out=noty);
+   Mux16(a=zeroy, b=noty, sel=ny, out=inpy);
+
+   // f
+   Add16(a=inpx, b=inpy, out=addxy);
+   And16(a=inpx, b=inpy, out=andxy);
+   Mux16(a=andxy, b=addxy, sel=f, out=fxy);
+
+   // no, ng -- ng from Sign Magnitude Representation
+   Not16(in=fxy, out=notfxy);
+   Mux16(a=fxy, b=notfxy, sel=no, out=out, out[0..7] = pzr1, out[8..15] = pzr2, out[15] = ng);
+
+   // zr
+   Or8Way(in=pzr1, out=zr1);
+   Or8Way(in=pzr2, out=zr2);
+   Or(a=zr1, b=zr2, out=notzr);
+   Not(in=notzr, out=zr);
+}
