@@ -13,6 +13,7 @@
 * 參考：
 
   * GitHub 上的 [sake](https://github.com/sake92/nand2tetris/tree/master/projects)
+  全部複製sake沒修改
 ---
 
 ## 第 7 章：VM I – Stack Arithmetic
@@ -58,6 +59,7 @@
 * 參考：
 
   * GitHub 上的 [sake](https://github.com/sake92/nand2tetris/tree/master/projects)
+  全部複製sake沒修改
 
 ---
 
@@ -77,6 +79,7 @@
 * 參考：
 
   * GitHub 上的 [sake](https://github.com/sake92/nand2tetris/tree/master/projects)
+  全部複製sake沒修改
 ---
 
 ## 第 10 章：Compiler I – Syntax Analysis
@@ -92,6 +95,8 @@
 * 參考：
 
   * GitHub 上的 [sake](https://github.com/sake92/nand2tetris/tree/master/projects)
+  參考sake修改
+  參考 楊丞皓 修改
 * 狀態：
 
   * 未獨立完成
